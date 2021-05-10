@@ -16,4 +16,13 @@ gui
   });
 
 const canvas = document.getElementById("canvas");
-const canvasTemplate = new Canvas(canvas);
+
+// demo
+const canvasTemplate = new Canvas(canvas, {
+  showMouse: true,
+  draw: (time) => {
+    // console.log("hello", time);
+  }
+});
+
+// s
