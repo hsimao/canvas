@@ -67,6 +67,7 @@ export default class Canvas {
   loaded() {
     this.initCanvas();
     this.initOnEvent();
+    this.initDrawMathods();
     this.init();
     requestAnimationFrame(() => this.draw());
     setInterval(() => this.update(), 1000 / this.updateFPS);
@@ -90,13 +91,18 @@ export default class Canvas {
   // 畫面繪製
   draw() {
     this.clearBackground();
-    if (this.drawFn) this.drawFn(this.time);
+    if (this.drawFn) this.drawFn(this.context, this.time);
     if (this.showMouse) this.drawMousePosition();
 
     requestAnimationFrame(() => this.draw());
   }
 
   // canvas draw methods start
+  initDrawMathods() {
+    this.context.circle = (...arg) => this.circle(...arg);
+    this.context.line = (...arg) => this.line(...arg);
+  }
+
   circle({ x, y }, r) {
     this.context.arc(x, y, r, 0, Math.PI * 2);
   }
