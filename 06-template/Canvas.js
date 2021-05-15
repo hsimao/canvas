@@ -1,7 +1,19 @@
 import Vector from "../04-vector/Vector.js";
 
 export default class Canvas {
-  constructor(canvas, { showMouse = false, width = 0, height = 0, draw }) {
+  constructor(
+    canvas,
+    {
+      showMouse = false,
+      clearBg = true,
+      width = 0,
+      height = 0,
+      draw,
+      init,
+      update,
+      updateFPS = 30
+    }
+  ) {
     if (!canvas) {
       throw new Error("canvas not find!");
     }
@@ -10,12 +22,16 @@ export default class Canvas {
     this.context = null;
     this.width = width;
     this.height = height;
-    this.drawFn = draw;
     this.showMouse = showMouse;
+    this.clearBg = clearBg;
     this.fullWidth = window.innerWidth;
     this.fullHeight = window.innerHeight;
     this.time = 0;
-    this.updateFPS = 30;
+    this.updateFPS = updateFPS;
+
+    this.drawFn = draw;
+    this.initFn = init;
+    this.updateFn = update;
 
     this.bgColor = "black";
 
@@ -52,7 +68,9 @@ export default class Canvas {
   }
 
   // 邏輯初始化
-  init() {}
+  init() {
+    if (this.initFn) this.initFn(this);
+  }
 
   // 事件監聽設置
   initOnEvent() {
@@ -76,6 +94,7 @@ export default class Canvas {
   // canvas 邏輯更新
   update() {
     this.time++;
+    if (this.updateFn) this.updateFn(this);
   }
 
   clearBackground() {
@@ -90,8 +109,10 @@ export default class Canvas {
 
   // 畫面繪製
   draw() {
-    this.clearBackground();
-    if (this.drawFn) this.drawFn(this.context, this.time);
+    if (this.clearBg) {
+      this.clearBackground();
+    }
+    if (this.drawFn) this.drawFn(this);
     if (this.showMouse) this.drawMousePosition();
 
     requestAnimationFrame(() => this.draw());
