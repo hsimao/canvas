@@ -45,6 +45,10 @@ export default class Vector {
     return new Vector(this.x, this.y);
   }
 
+  toString() {
+    return `(${this.x}, ${this.y})`;
+  }
+
   get angle() {
     return Math.atan2(this.y, this.x);
   }
@@ -53,7 +57,45 @@ export default class Vector {
     return this.mul(1 / this.length);
   }
 
-  toString() {
-    return `(${this.x}, ${this.y})`;
+  static get ZERO() {
+    return new Vector(0, 0);
+  }
+
+  static get UP() {
+    return new Vector(0, -1);
+  }
+
+  static get DOWN() {
+    return new Vector(0, 1);
+  }
+
+  static get LEFT() {
+    return new Vector(-1, 0);
+  }
+
+  static get RIGHT() {
+    return new Vector(1, 0);
+  }
+
+  static DIR(str) {
+    if (!str) {
+      return Vector.ZERO;
+    }
+    let type = ("" + str).toUpperCase();
+    return Vector[type];
+  }
+
+  static DIR_ANGLE(str) {
+    switch (str) {
+      case "right":
+        return 0;
+      case "left":
+        return PI();
+      case "up":
+        return PI(-0.5);
+      case "down":
+        return PI(0.5);
+    }
+    return 0;
   }
 }
