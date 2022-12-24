@@ -8,6 +8,22 @@ import Scene from "./Scene.js";
 
 const canvas = document.getElementById("canvas");
 
+// 繪製敵人
+const drawEnemy = (ctx, scene) => {
+  // 產生 5 排敵人, 一排 10 位
+  for (let i = 0; i < 10; i++) {
+    for (let o = 0; o < 5; o++) {
+      const enemy = new Enemy(ctx, {
+        p: new Vector(i * 100, o * 70 + 50),
+        // 速度, 向下移動
+        v: new Vector(0, 0.1),
+        name: "enemy",
+        tags: ["enemy", "enemy_flock"]
+      });
+      scene.addChild(enemy);
+    }
+  }
+};
 // 繪製子彈
 const drawBullet = (ctx, scene) => {
   const plane = scene.getChildByName("player");
@@ -60,19 +76,7 @@ new Canvas(canvas, {
     });
     scene.addChild(player);
 
-    // 產生 5 排敵人, 一排 10 位
-    for (let i = 0; i < 10; i++) {
-      for (let o = 0; o < 5; o++) {
-        const enemy = new Enemy(ctx, {
-          p: new Vector(i * 100, o * 70 + 50),
-          // 速度, 向下移動
-          v: new Vector(0, 0.1),
-          name: "enemy",
-          tags: ["enemy", "enemy_flock"]
-        });
-        scene.addChild(enemy);
-      }
-    }
+    drawEnemy(ctx, scene);
   },
   draw: ({ context: ctx, fullWidth, fullHeight, time, mousePosition }) => {
     scene.draw();
