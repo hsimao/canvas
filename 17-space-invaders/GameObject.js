@@ -48,6 +48,53 @@ export default class GameObject {
     });
   }
 
+  // 取得邊界點
+  get boundaryPoints() {
+    // 左上角
+    const LT = this.p;
+    // 右下角
+    const RB = this.p.add(this.size);
+    // 左下角
+    const LB = new Vector(LT.x, RB.y);
+    // 右上角
+    const RT = new Vector(RB.x, LT.y);
+    // 中心點
+    const MM = this.p.add(this.size.mul(0.5));
+
+    return { LT, LB, RB, RT, MM };
+  }
+
+  // 是否在範圍內
+  inRange(position) {
+    const { LT, LB, RB, RT, MM } = this.boundaryPoints;
+    const xInRange = position.x > LT.x && position.x < RT.x;
+    const yInRange = position.y > LT.y && position.y < RB.y;
+    return xInRange && yInRange;
+  }
+
+  // 碰撞
+  collide(obj) {
+    let isCollide = false;
+    const points1 = Object.values(this.boundaryPoints);
+    const points2 = Object.values(obj.boundaryPoints);
+
+    // 檢查當元素有沒有在傳入元素的範圍內
+    points1.forEach((p) => {
+      if (obj.inRange(p)) {
+        isCollide = true;
+      }
+    });
+
+    // 檢查傳入元素有沒有在當前元素範圍內
+    points2.forEach((p) => {
+      if (this.inRange(p)) {
+        isCollide = true;
+      }
+    });
+
+    return isCollide;
+  }
+
   setFill(color) {
     this.ctx.fillStyle = color;
   }

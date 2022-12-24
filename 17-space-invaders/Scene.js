@@ -31,7 +31,7 @@ export default class Scene {
     return this.children.find((child) => child.name === name);
   }
 
-  getChildByTag(tag) {
+  getChildrenByTag(tag) {
     return this.children.filter((child) =>
       child.tags.find((childTag) => childTag === tag)
     );

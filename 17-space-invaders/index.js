@@ -8,6 +8,46 @@ import Scene from "./Scene.js";
 
 const canvas = document.getElementById("canvas");
 
+// 繪製子彈
+const drawBullet = (ctx, scene) => {
+  const plane = scene.getChildByName("player");
+
+  if (time % 20 === 0) {
+    // 左側子彈
+    const bulletLeft = new Bullet(ctx, {
+      p: plane.p,
+      tags: ["bullet"]
+    });
+
+    // 右側子彈
+    const bulletRight = new Bullet(ctx, {
+      p: plane.p.add(new Vector(plane.size.x, 0)),
+      tags: ["bullet"]
+    });
+
+    scene.addChild([bulletLeft, bulletRight]);
+  }
+};
+
+// 處理子彈跟飛機碰撞邏輯
+const handleBulletWithEnemyCollide = (scene) => {
+  // 取出所有敵人、子彈
+  const allBullets = scene.getChildrenByTag("bullet");
+  const allEnemies = scene.getChildrenByTag("enemy");
+
+  // 檢查子彈跟敵人碰撞
+  allEnemies.forEach((enemy) => {
+    allBullets.forEach((bullet) => {
+      // 子彈打到敵人
+      const isCollide = enemy && bullet && enemy.collide(bullet);
+      if (isCollide) {
+        scene.removeChild(enemy);
+        scene.removeChild(bullet);
+      }
+    });
+  });
+};
+
 let time = 0;
 let scene;
 new Canvas(canvas, {
@@ -41,20 +81,10 @@ new Canvas(canvas, {
     time++;
     scene.update();
 
-    // 飛機射出子彈
-    const plane = scene.getChildByName("player");
-    if (time % 20 === 0) {
-      const bulletLeft = new Bullet(ctx, {
-        p: plane.p,
-        tags: ["bullet"]
-      });
+    // 子彈
+    drawBullet(ctx, scene);
 
-      const bulletRight = new Bullet(ctx, {
-        p: plane.p.add(new Vector(plane.size.x, 0)),
-        tags: ["bullet"]
-      });
-
-      scene.addChild([bulletLeft, bulletRight]);
-    }
+    // 子彈打到敵人
+    handleBulletWithEnemyCollide(scene);
   }
 });
