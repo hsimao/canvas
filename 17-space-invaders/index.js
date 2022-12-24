@@ -64,9 +64,34 @@ const handleBulletWithEnemyCollide = (scene) => {
   });
 };
 
+// 依據滑鼠位置控制飛機左右移動
+const handlePlayerMoveWithMouse = (scene, mousePosition) => {
+  const player = scene.getChildByName("player");
+  if (!player) return;
+
+  // 差異小於 10 不移動, 避免抖動問題
+  const diff = Math.abs(player.boundaryPoints.MM.x - mousePosition.x);
+  if (diff < 10) {
+    player.v.x = 0;
+    player.a.x = 0;
+    return;
+  }
+
+  // 往左移動
+  if (player.boundaryPoints.MM.x > mousePosition.x) {
+    // 越靠近左側偏移距離越少(移動越慢), 反之越多(移動越快)
+    player.a.x = (-12 - player.v.x) * 0.2;
+    // 往右移動
+  } else if (player.boundaryPoints.MM.x < mousePosition.x) {
+    // 越靠近右側偏移距離越少(移動越慢), 反之越多(移動越快)
+    player.a.x = (12 - player.v.x) * 0.2;
+  }
+};
+
 let time = 0;
 let scene;
 new Canvas(canvas, {
+  showMouse: true,
   init: ({ context: ctx, fullWidth, fullHeight }) => {
     scene = new Scene();
 
@@ -81,12 +106,15 @@ new Canvas(canvas, {
   draw: ({ context: ctx, fullWidth, fullHeight, time, mousePosition }) => {
     scene.draw();
   },
-  update: ({ context: ctx }) => {
+  update: ({ context: ctx, mousePosition }) => {
     time++;
     scene.update();
 
     // 子彈
     drawBullet(ctx, scene);
+
+    // 依據滑鼠位置控制飛機左右移動
+    handlePlayerMoveWithMouse(scene, mousePosition);
 
     // 子彈打到敵人
     handleBulletWithEnemyCollide(scene);
